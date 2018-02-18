@@ -527,11 +527,11 @@ public class OneScenario extends AppCompatActivity {
                 Log.i(Constants.TAG, "I received writeBuf(ACK_READ): " + new String(writeBuf));
                 if (writeBuf[0] == 'R') {
                     Log.i(Constants.TAG, "I am inside the if condition in ACK writeBuf");
-                    stopWatch.halt();
+                    //stopWatch.halt();
                     // Update Message Timing List and Reset The Timer
-                    useFile.saveDelayData(Constants.FileNames.Delay, stopWatch.getGlobalTime());
-                    stopWatch.updateList();
-                    stopWatch.reset();
+                  //  useFile.saveDelayData(Constants.FileNames.Delay, stopWatch.getGlobalTime());
+                   // stopWatch.updateList();
+                  //  stopWatch.reset();
                 }
             } else if (msg.what == Constants.MessageConstants.ACK_WRITE) {
                 Log.i(Constants.TAG, "I am sending an ACK -> " + GlobalReceivedMessage);
@@ -616,7 +616,7 @@ public class OneScenario extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!(SocketGlobal == null)) {
-                    streamData.write((EditMessageBox.getText().toString()).getBytes());
+                    streamData.writePackets((EditMessageBox.getText().toString()).getBytes());
                     Log.i(Constants.TAG, "Message Sent: " + EditMessageBox.getText());
                     streamData.flushOutStream();
                 } else {

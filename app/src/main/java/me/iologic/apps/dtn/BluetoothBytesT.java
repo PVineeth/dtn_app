@@ -99,7 +99,7 @@ class BluetoothBytesT extends Thread {
             String testMessage = new String(mmBuffer);
             Log.i(Constants.TAG, "Message Sending: " + testMessage);
 
-            stopW.start();
+         //   stopW.start();
 
             sendingStartTime = System.nanoTime();
             mmOutStream.write(mmBuffer);
@@ -140,7 +140,7 @@ class BluetoothBytesT extends Thread {
 
         Log.i(Constants.TAG, "Bytes length from writePackets(): " + bytes.length);
 
-        stopW.start();
+       // stopW.start();
 
         for (j = initi; j < (Constants.Packet.PACKET_SIZE + offset); j++) {
             try {
