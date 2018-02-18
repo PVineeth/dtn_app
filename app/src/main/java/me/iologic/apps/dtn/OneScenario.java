@@ -333,7 +333,7 @@ public class OneScenario extends AppCompatActivity {
                     SocketGlobal = clientConnect.getClientSocket();
                     streamData = new BluetoothBytesT(SocketGlobal, btMessageStatus, stopWatch);
 
-                    final Thread checkBandwidthT = new Thread(new Runnable() {
+          /*          final Thread checkBandwidthT = new Thread(new Runnable() {
                         @Override
                         public void run() {
 
@@ -362,7 +362,7 @@ public class OneScenario extends AppCompatActivity {
                         }
                     });
 
-                    checkBandwidthT.start();
+                    checkBandwidthT.start(); */
 
 
                     // getDataHandler = new Handler() {
@@ -414,16 +414,16 @@ public class OneScenario extends AppCompatActivity {
                     Toast toast = Toast.makeText(getApplicationContext(), Constants.MessageConstants.ACK_CONNECT_CLIENT_SUCCESS, Toast.LENGTH_SHORT);
                     toast.show();
 
-                    ACKSocketGlobal = clientConnect.getACKClientSocket();
-                    ACKData = new BluetoothACKBytesT(ACKSocketGlobal, btACKStatus);
-                    ACKData.start();
+                 //   ACKSocketGlobal = clientConnect.getACKClientSocket();
+                 //   ACKData = new BluetoothACKBytesT(ACKSocketGlobal, btACKStatus);
+                //    ACKData.start();
                 } else if (msg.arg1 == 100) {
                     Toast toast = Toast.makeText(getApplicationContext(), Constants.MessageConstants.BW_CONNECT_CLIENT_SUCCESS, Toast.LENGTH_SHORT);
                     toast.show();
 
-                    BandSocketGlobal = clientConnect.getBWClientSocket();
-                    bandData = new BandwidthBytesT(BandSocketGlobal, btBandStatus);
-                    bandData.start();
+                    //BandSocketGlobal = clientConnect.getBWClientSocket();
+                   // bandData = new BandwidthBytesT(BandSocketGlobal, btBandStatus);
+                   // bandData.start();
                 }
 
                 toastShown = true;
@@ -475,16 +475,16 @@ public class OneScenario extends AppCompatActivity {
                     Toast toast = Toast.makeText(getApplicationContext(), Constants.MessageConstants.ACK_CONNECT_SERVER_SUCCESS, Toast.LENGTH_SHORT);
                     toast.show();
 
-                    ACKSocketGlobal = serverConnect.getACKSocket();
-                    ACKData = new BluetoothACKBytesT(ACKSocketGlobal, btACKStatus);
-                    ACKData.start();
+                 //   ACKSocketGlobal = serverConnect.getACKSocket();
+                 //   ACKData = new BluetoothACKBytesT(ACKSocketGlobal, btACKStatus);
+                 //   ACKData.start();
                 } else if (msg.arg1 == 3) {
                     Toast toast = Toast.makeText(getApplicationContext(), Constants.MessageConstants.BW_CONNECT_SERVER_SUCCESS, Toast.LENGTH_SHORT);
                     toast.show();
 
-                    BandSocketGlobal = serverConnect.getBWSocket();
-                    bandData = new BandwidthBytesT(BandSocketGlobal, btBandStatus);
-                    bandData.start();
+                  //  BandSocketGlobal = serverConnect.getBWSocket();
+                 //   bandData = new BandwidthBytesT(BandSocketGlobal, btBandStatus);
+                 //   bandData.start();
                 }
             }
         };
@@ -512,7 +512,7 @@ public class OneScenario extends AppCompatActivity {
                 messageReceived.setText(writeMessage);
                 // }
                 GlobalReceivedMessage = writeMessage;
-                ACKData.write(writeACK);
+               // ACKData.write(writeACK);
                 // isCheckingBandwidth = false;
                 Log.i(Constants.TAG, "Am I inside Message Received Handler? " + true);
             }
