@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="me.iologic.apps.dtn.MainActivity">
     <item
-        android:id="@+id/action_msgTime"
+        android:id="@+id/action_showImage"
+        android:title="@string/showImage"
         android:orderInCategory="100"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_msgTime"
+        android:orderInCategory="101"
         android:title="@string/action_msgTime"
         app:showAsAction="always" />
 </menu>
