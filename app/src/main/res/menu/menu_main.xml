@@ -4,11 +4,13 @@
     tools:context="me.iologic.apps.dtn.MainActivity">
     <item
         android:id="@+id/action_showImage"
-        android:title="@string/showImage"
+        android:icon="@drawable/ic_image_white"
         android:orderInCategory="100"
-        app:showAsAction="always"/>
+        android:title="@string/showImage"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_msgTime"
+        android:icon="@drawable/ic_time_white"
         android:orderInCategory="101"
         android:title="@string/action_msgTime"
         app:showAsAction="always" />

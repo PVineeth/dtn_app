@@ -29,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +71,7 @@ public class OneScenario extends AppCompatActivity {
 
     FileServices useFile;
     File tempFile;
+    ImageData img;
 
     double FileSentBandwidth;
     Handler getDataHandler;
@@ -84,6 +84,8 @@ public class OneScenario extends AppCompatActivity {
     boolean BWStart, BWPacketLossCheckStart;
     double GlobalMsgPacketLoss;
     double GlobalBWPacketLoss;
+
+    Uri ImageUri;
 
 
     private static String SERVER_CONNECTION_SUCCESSFUL;
@@ -102,7 +104,6 @@ public class OneScenario extends AppCompatActivity {
     TextView bandwidthText;
     TextView delayText;
     TextView checkBandwidthText;
-    EditText EditMessageBox;
     Button sendImgBtn;
     TextView MsgPacketLossText;
     TextView BWPacketLossText;
@@ -142,7 +143,6 @@ public class OneScenario extends AppCompatActivity {
         btStatusText = (TextView) findViewById(R.id.btStatus);
         peerStatusText = (TextView) findViewById(R.id.peerStatus);
         messageReceived = (TextView) findViewById(R.id.messageStatus);
-        EditMessageBox = (EditText) findViewById(R.id.messageBox);
         sendImgBtn = (Button) findViewById(R.id.sendImg);
         currentStatusText = (TextView) findViewById(R.id.currentStatus);
         peerConnectTime = (TextView) findViewById(R.id.pairingTime);
@@ -174,6 +174,8 @@ public class OneScenario extends AppCompatActivity {
         useFile = new FileServices(getApplicationContext(), saveFileUUID);
 
         speed = new LightningMcQueen();
+
+        img = new ImageData();
 
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this
@@ -229,7 +231,7 @@ public class OneScenario extends AppCompatActivity {
 
         Dialog();
         startBluetooth();
-        sendMessage();
+        sendImage();
     }
 
     @Override
@@ -246,6 +248,10 @@ public class OneScenario extends AppCompatActivity {
             case R.id.action_msgTime:
                 showMsgTimeList();
                 return true;
+            case R.id.action_showImage:
+                Intent intent = new Intent(this, ImageViewer.class);
+                startActivity(intent);
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -308,11 +314,11 @@ public class OneScenario extends AppCompatActivity {
         String btEnabledMessage = "Bluetooth is Enabled";
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        getGoodOldName = mBluetoothAdapter.getName(); // For replacing name when Activity Exits
 
         if (mBluetoothAdapter == null) {
             btStatusText.setText("Bluetooth Not Found!");
         } else if (!mBluetoothAdapter.isEnabled()) {
+            getGoodOldName = mBluetoothAdapter.getName(); // For replacing name when Activity Exits
             mBluetoothAdapter.enable();
             //   Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
@@ -627,7 +633,7 @@ public class OneScenario extends AppCompatActivity {
                     stopWatch.updateList();
                     stopWatch.reset();
                 }
-                GlobalMsgPacketLoss = streamData.getPacketLoss(EditMessageBox.getText().length(), new String(writeBuf)); // For 1st Scenario
+                //GlobalMsgPacketLoss = streamData.getPacketLoss(EditMessageBox.getText().length(), new String(writeBuf)); // For 1st Scenario
                 String showMsgLossPercent = df.format(GlobalMsgPacketLoss) + "%";
                 if (GlobalMsgPacketLoss == 0) {
                     MsgPacketLossText.setTextColor(Color.GRAY);
@@ -746,7 +752,7 @@ public class OneScenario extends AppCompatActivity {
         }
     }
 
-    public void sendMessage() {
+    public void sendImage() {
 
         NOT_YET_CONNECTED = "I am not yet connected to any phone";
 
@@ -754,8 +760,10 @@ public class OneScenario extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!(SocketGlobal == null)) {
-                    streamData.write((EditMessageBox.getText().toString()).getBytes());
-                    Log.i(Constants.TAG, "Message Sent: " + EditMessageBox.getText());
+                    performFileSearch();
+                   byte[] ImgBytes = img.ImageToBytes(ImageUri); // Converting Image To Bytes
+                    streamData.write(ImgBytes);
+                  //  Log.i(Constants.TAG, "Message Sent: " + EditMessageBox.getText());
                     streamData.flushOutStream();
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), NOT_YET_CONNECTED, Toast.LENGTH_SHORT);
@@ -801,11 +809,11 @@ public class OneScenario extends AppCompatActivity {
             Uri uri = null;
             if (resultData != null) {
                 uri = resultData.getData();
+                ImageUri = uri;
                 Log.i(Constants.TAG, "Uri: " + uri.toString());
             }
         }
     }
-
 
 
     @Override

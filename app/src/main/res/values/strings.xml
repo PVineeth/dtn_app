@@ -28,4 +28,10 @@
     <string name="MeterPerSecond">m/s</string>
     <string name="sendImage">Send Image</string>
     <string name="showImage">Image</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title_activity_image_viewer">ImageViewer</string>
 </resources>
