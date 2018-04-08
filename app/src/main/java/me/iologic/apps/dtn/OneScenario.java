@@ -160,7 +160,7 @@ public class OneScenario extends AppCompatActivity {
 
         btStatusText.setSelected(true); // For Horizontal Scrolling
         messageReceived.setSelected(true); // For Horizontal Scrolling
-        sendImgBtn.setEnabled(false);
+        sendImgBtn.setEnabled(true);
 
         btServerConnectionStatus = new Handler();
         btClientConnectionStatus = new Handler();
@@ -761,10 +761,6 @@ public class OneScenario extends AppCompatActivity {
             public void onClick(View view) {
                 if (!(SocketGlobal == null)) {
                     performFileSearch();
-                   byte[] ImgBytes = img.ImageToBytes(ImageUri); // Converting Image To Bytes
-                    streamData.write(ImgBytes);
-                  //  Log.i(Constants.TAG, "Message Sent: " + EditMessageBox.getText());
-                    streamData.flushOutStream();
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), NOT_YET_CONNECTED, Toast.LENGTH_SHORT);
                     toast.show();
@@ -809,8 +805,17 @@ public class OneScenario extends AppCompatActivity {
             Uri uri = null;
             if (resultData != null) {
                 uri = resultData.getData();
-                ImageUri = uri;
+                // ImageUri = uri;
                 Log.i(Constants.TAG, "Uri: " + uri.toString());
+                byte[] ImgBytes = img.ImageToBytes(RealPathUtil.getRealPath(getApplicationContext(), uri)); // Converting Image To Bytes
+                Log.i(Constants.TAG, "ImgBytes: " + ImgBytes.length + " " + ImgBytes.toString());
+                if (ImgBytes != null) {
+                    streamData.writePackets(ImgBytes);
+                    //  Log.i(Constants.TAG, "Message Sent: " + EditMessageBox.getText());
+                    streamData.flushOutStream();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Image URI is null", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

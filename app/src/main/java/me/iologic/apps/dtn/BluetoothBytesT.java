@@ -24,6 +24,8 @@ class BluetoothBytesT extends Thread {
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
     private byte[] mmBuffer; // mmBuffer store for the stream
+    private byte[] mmBufferFinal; // Stores all received bytes in 1 byte array
+    int counter;
     private int GlobalNumBytesRead;
     byte dummyByte;
 
@@ -39,6 +41,8 @@ class BluetoothBytesT extends Thread {
         mmSocket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
+
+        mmBufferFinal = new byte[200000]; // Maximum 195 KB file size can be sent.
 
         // Get the input and output streams; using temp objects because
         // member streams are final.
@@ -65,7 +69,7 @@ class BluetoothBytesT extends Thread {
         // Keep listening to the InputStream until an exception occurs.
         while (true) {
             try {
-                mmBuffer = new byte[1024];
+                mmBuffer = new byte[200000];
                 int numBytes; // bytes returned from read()
 
                 // Log.i(Constants.TAG, "BandwidthBytesT Check: " + bandwidthCheck);

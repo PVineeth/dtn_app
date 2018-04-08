@@ -1,6 +1,8 @@
 package me.iologic.apps.dtn;
 
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -11,30 +13,38 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class ImageData {
 
-    public byte[] ImageToBytes(Uri filePath) {
-        File file = new File(filePath.toString());
-        //init array with file length
-        byte[] bytesArray = new byte[(int) file.length()];
+    public byte[] ImageToBytes(String filePath) {
+        File file = new File(filePath);
+        Log.i(Constants.TAG, "File Paths: " + filePath);
 
-        FileInputStream fis;
+        if (!file.equals(null)) {
+            //init array with file length
+            byte[] bytesArray = new byte[(int) file.length()];
 
-        try {
-            fis = new FileInputStream(file);
+            FileInputStream fis;
+
             try {
-                fis.read(bytesArray); //read file into bytes[]
-                fis.close();
-            } catch (IOException er) {
+                fis = new FileInputStream(file);
+                try {
+                    fis.read(bytesArray); //read file into bytes[]
+                    fis.close();
+                } catch (IOException er) {
+
+                }
+
+            } catch (FileNotFoundException io) {
 
             }
 
-        } catch (FileNotFoundException io) {
-
+            return bytesArray;
         }
 
-        return bytesArray;
+        return null;
     }
 
     /**
