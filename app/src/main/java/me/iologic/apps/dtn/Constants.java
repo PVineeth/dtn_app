@@ -44,6 +44,7 @@ public class Constants {
         public static final int MESSAGE_READ = 0;
         public static final int MESSAGE_WRITE = 1;
         public static final int MESSAGE_TOAST = 2;
+        public static final String MESSAGE_SENDING_ENDED = "#&1";
 
         public static final int ACK_READ = 5;
         public static final int ACK_WRITE = 6;

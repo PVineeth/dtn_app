@@ -26,7 +26,7 @@ class BluetoothBytesT extends Thread {
     private byte[] mmBuffer; // mmBuffer store for the stream
     private byte[] mmBufferFinal; // Stores all received bytes in 1 byte array
     int counter;
-    private int GlobalNumBytesRead;
+    private int GlobalNumBytesRead = 0;
     byte dummyByte;
 
     long sendingStartTime, sendingEndTime, duration, ACKStartTime;
@@ -43,6 +43,7 @@ class BluetoothBytesT extends Thread {
         OutputStream tmpOut = null;
 
         mmBufferFinal = new byte[200000]; // Maximum 195 KB file size can be sent.
+        counter=0;
 
         // Get the input and output streams; using temp objects because
         // member streams are final.
@@ -78,11 +79,16 @@ class BluetoothBytesT extends Thread {
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);
                     // Send the obtained bytes to the UI activity.
-                    GlobalNumBytesRead = numBytes;
+                    GlobalNumBytesRead+= numBytes;
+
+                    System.arraycopy(mmBuffer, 0, mmBufferFinal, counter, numBytes);
+                    counter+=numBytes;
+
                     Log.i(Constants.TAG, "Number Of Message Bytes Received: " + numBytes);
+                    Log.i(Constants.TAG, "Total Number Of Bytes Received: " + GlobalNumBytesRead);
                     // Log.i(Constants.TAG, "Reading sendBuffer: " + new String(sendBuffer));
                     Message readMsg = mHandler.obtainMessage(
-                            Constants.MessageConstants.MESSAGE_READ, numBytes, -1,
+                            Constants.MessageConstants.MESSAGE_READ, numBytes, mmBufferFinal.length,
                             mmBuffer);
                     readMsg.sendToTarget();
                 } else {
@@ -133,6 +139,15 @@ class BluetoothBytesT extends Thread {
             writeErrorMsg.setData(bundle);
             mHandler.sendMessage(writeErrorMsg);
         }
+    }
+
+    public byte[] getMmBufferFinal(){
+        return  mmBufferFinal;
+    }
+
+    public void resetmmBufferFinal(){
+        mmBufferFinal = new byte[200000];
+        counter = 0;
     }
 
     public void writePackets(byte[] bytes) {

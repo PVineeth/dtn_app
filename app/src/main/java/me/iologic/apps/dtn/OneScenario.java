@@ -16,6 +16,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -36,8 +37,10 @@ import android.widget.Toast;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static me.iologic.apps.dtn.Constants.Permissions.READ_REQUEST_CODE;
@@ -118,7 +121,7 @@ public class OneScenario extends AppCompatActivity {
 
     DecimalFormat df;
 
-    int packetReceivedCount;
+    int packetReceivedCount, allPacketSizes;
 
     LightningMcQueen speed;
     double currentspeed;
@@ -223,7 +226,7 @@ public class OneScenario extends AppCompatActivity {
         BWPacketLossCheckStart = true;
 
         df = new DecimalFormat("#.00");
-        packetReceivedCount = 0;
+        packetReceivedCount = allPacketSizes = 0;
 
         btFindIndicator = new Indicators();
 
@@ -600,8 +603,24 @@ public class OneScenario extends AppCompatActivity {
                 String writeMessage = new String(writeBuf);
                 // if(!isCheckingBandwidth) {
                 //  Log.i(Constants.TAG, "Message Received: " + writeMessage);
-                messageReceived.setText(writeMessage);
+                int previousPacketRC = packetReceivedCount++;
+                int previousAllPacketSizes = allPacketSizes += msg.arg1;
+                messageReceived.setText("Packet Received Count: " + packetReceivedCount + " " + allPacketSizes);
                 // }
+                byte[] tempWriteBuf = trimByteArray(writeBuf, msg.arg1);
+                Log.i(Constants.TAG, "TempWRITEBUF SIZE: " + tempWriteBuf.length);
+                if (Arrays.equals(tempWriteBuf, Constants.MessageConstants.MESSAGE_SENDING_ENDED.getBytes())) {
+                    Log.i(Constants.TAG, "Converting Bytes Into Images " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
+                    try {
+                        img.writeFileAsBytes(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/img000.jpg", streamData.getMmBufferFinal());
+                        streamData.resetmmBufferFinal();
+                        packetReceivedCount = 0;
+                        allPacketSizes = 0;
+                        messageReceived.setText("Packet Received Count: " + previousPacketRC + " " + previousAllPacketSizes); // To retain infromation about previous image in UI
+                    } catch (IOException ioE) {
+                        Log.e(Constants.TAG, "Could Not Save Image To Specified Place");
+                    }
+                }
                 GlobalReceivedMessage = writeMessage;
                 ACKData.write(writeACK.getBytes());
                 // isCheckingBandwidth = false;
@@ -810,14 +829,29 @@ public class OneScenario extends AppCompatActivity {
                 byte[] ImgBytes = img.ImageToBytes(RealPathUtil.getRealPath(getApplicationContext(), uri)); // Converting Image To Bytes
                 Log.i(Constants.TAG, "ImgBytes: " + ImgBytes.length + " " + ImgBytes.toString());
                 if (ImgBytes != null) {
-                    streamData.writePackets(ImgBytes);
-                    //  Log.i(Constants.TAG, "Message Sent: " + EditMessageBox.getText());
+                    streamData.write(ImgBytes);
+                   // final Handler handler = new Handler();
+                   // handler.postDelayed(new Runnable() {
+                   //     @Override
+                  //      public void run() {
+                            streamData.write("#&1".getBytes()); // End of stream
+                  //      }
+                 //   }, 10);
                     streamData.flushOutStream();
                 } else {
                     Toast.makeText(getApplicationContext(), "Image URI is null", Toast.LENGTH_SHORT).show();
                 }
             }
         }
+    }
+
+    private static byte[] trimByteArray(byte[] bytes, int allPacketSizes) {
+        int i = bytes.length - 1;
+        while (i >= allPacketSizes && bytes[i] == 0) {
+            --i;
+        }
+
+        return Arrays.copyOf(bytes, i + 1);
     }
 
 

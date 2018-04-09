@@ -51,9 +51,8 @@ public class ImageData {
      * Write an array of bytes to a file. Presumably this is binary data; for plain text
      * use the writeFile method.
      */
-    public void writeFileAsBytes(Uri filePath, byte[] bytes) throws IOException {
-        String imageFileName = filePath.toString() + Constants.FileNames.receivedImageFileName;
-        OutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(imageFileName));
+    public static void writeFileAsBytes(String fullPath, byte[] bytes) throws IOException {
+        OutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(fullPath));
         InputStream inputStream = new ByteArrayInputStream(bytes);
         int token = -1;
 
